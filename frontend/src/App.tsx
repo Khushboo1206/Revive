@@ -19,6 +19,8 @@ const navItems: { page: Page; icon: string; label: string; count?: string }[] = 
   { page: 'policies', icon: '◇', label: 'Human Review' }, { page: 'settings', icon: '⚙', label: 'Settings' },
 ]
 const simulatorNavItem: { page: Page; icon: string; label: string; count?: string } = { page: 'simulator', icon: '⚡', label: 'Failure Simulator' }
+const pagePaths: Record<Page, string> = { landing: '/', overview: '/overview', cases: '/payment', actions: '/recovery', customers: '/customers', analytics: '/analytics', audit: '/audit-trail', policies: '/human-review', settings: '/settings', simulator: '/simulator' }
+const pathPages = Object.entries(pagePaths).reduce<Record<string, Page>>((pages, [page, path]) => { pages[path] = page as Page; return pages }, { '/payments': 'cases' })
 
 function formatAmount(amount: number | string) { return `INR ${Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}` }
 function mapApiCase(item: ApiCase): RecoveryCase {
@@ -28,7 +30,7 @@ function mapApiCase(item: ApiCase): RecoveryCase {
 }
 
 function App() {
-  const [page, setPage] = useState<Page>('landing')
+  const [page, setPage] = useState<Page>(() => pathPages[window.location.pathname] ?? 'landing')
   const [activeFilter, setActiveFilter] = useState<'All' | CaseStatus>('All')
   const [recoveryCases, setRecoveryCases] = useState<RecoveryCase[]>([])
   const [connectionState, setConnectionState] = useState<'loading' | 'live' | 'offline'>('loading')
@@ -61,7 +63,17 @@ function App() {
   const visibleCases = useMemo(() => activeFilter === 'All' ? recoveryCases : recoveryCases.filter((item) => item.status === activeFilter), [activeFilter, recoveryCases])
   const notify = (message: string) => { setNotice(message); window.setTimeout(() => setNotice(''), 2500) }
   const exportReport = () => { const csv = ['Customer,Amount,Failure reason,Probability,Strategy,Status,Updated', ...visibleCases.map((item) => [item.customer, item.amount, item.reason, `${item.probability}%`, item.strategy, item.status, item.time].map((value) => `"${value.replaceAll('"', '""')}"`).join(','))].join('\n'); const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = 'revive-recovery-report.csv'; link.click(); URL.revokeObjectURL(link.href); notify('Report downloaded') }
-  const navigate = (nextPage: Page) => { setPage(nextPage); setSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  useEffect(() => {
+    const handlePopState = () => setPage(pathPages[window.location.pathname] ?? 'landing')
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
+  const navigate = (nextPage: Page) => {
+    const nextPath = pagePaths[nextPage]
+    if (window.location.pathname !== nextPath) window.history.pushState({}, '', nextPath)
+    setPage(nextPage); setSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   if (page === 'landing') return <LandingPage navigate={navigate} />
 

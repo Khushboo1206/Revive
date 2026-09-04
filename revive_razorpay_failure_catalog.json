@@ -1,0 +1,1530 @@
+{
+  "name": "Revive Razorpay Failure Catalogue",
+  "version": "1.0",
+  "source_policy": "Only documented Razorpay payment failure scenarios should be added. Runtime webhook values remain authoritative.",
+  "notes": [
+    "error_code, error_reason, error_description, error_source and error_step must be taken from the actual Razorpay event when available.",
+    "Descriptions in this catalogue are normalized summaries for classification, not replacements for the raw Razorpay error_description.",
+    "Payment Links, Payment Pages and Checkout are collection surfaces; their underlying payment failures are classified by payment method.",
+    "Subscription failures also involve subscription lifecycle events such as pending and halted."
+  ],
+  "failure_categories": [
+    {
+      "category": "temporary",
+      "description": "Potentially recoverable without changing the payment instrument."
+    },
+    {
+      "category": "customer_action_required",
+      "description": "Customer may need to correct or update something before recovery."
+    },
+    {
+      "category": "instrument_problem",
+      "description": "The payment instrument is blocked, expired, inactive or otherwise unusable."
+    },
+    {
+      "category": "limit_or_balance",
+      "description": "Balance, transaction limit or frequency restriction prevented payment."
+    },
+    {
+      "category": "risk_or_compliance",
+      "description": "Risk, authentication or policy controls prevented payment."
+    },
+    {
+      "category": "configuration",
+      "description": "Payment method or account configuration prevented the payment."
+    },
+    {
+      "category": "subscription_lifecycle",
+      "description": "Recurring payment/subscription state requires handling."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "GEN-001",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_failed",
+      "error_description": "Payment processing failed.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "GEN-002",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_timed_out",
+      "error_description": "Payment authorization timed out.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "GEN-003",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_cancelled",
+      "error_description": "Customer cancelled the payment.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "GEN-004",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_declined",
+      "error_description": "Payment was declined.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "GEN-005",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_risk_check_failed",
+      "error_description": "Payment failed a risk check.",
+      "error_source": "internal",
+      "error_step": "payment_authorization",
+      "failure_category": "risk_or_compliance"
+    },
+    {
+      "id": "GEN-006",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_method_not_enabled",
+      "error_description": "The selected payment method is not enabled.",
+      "error_source": "business",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "GEN-007",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_amount_tampered",
+      "error_description": "The payment amount was tampered with.",
+      "error_source": "internal",
+      "error_step": "payment_authorization",
+      "failure_category": "risk_or_compliance"
+    },
+    {
+      "id": "GEN-008",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "request_timed_out",
+      "error_description": "The payment request timed out.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "GEN-009",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "SERVER_ERROR",
+      "error_reason": "server_error",
+      "error_description": "A server-side error occurred.",
+      "error_source": "internal",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "GEN-010",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "any",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "verification_failed",
+      "error_description": "Payment verification failed.",
+      "error_source": "internal",
+      "error_step": "payment_authorization",
+      "failure_category": "risk_or_compliance"
+    },
+    {
+      "id": "CARD-001",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "card_declined",
+      "error_description": "The card was declined.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "CARD-002",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "insufficient_funds",
+      "error_description": "There are insufficient funds available for the payment.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "CARD-003",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "card_expired",
+      "error_description": "The card has expired.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "CARD-004",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "card_not_enrolled",
+      "error_description": "The card is not enrolled for the required payment authentication.",
+      "error_source": "issuer",
+      "error_step": "payment_authentication",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-005",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "card_disabled_for_online_payments",
+      "error_description": "Online payments are disabled for the card.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-006",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "debit_instrument_inactive",
+      "error_description": "The debit instrument is inactive.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "CARD-007",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "debit_instrument_blocked",
+      "error_description": "The debit instrument is blocked.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "CARD-008",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "incorrect_cvv",
+      "error_description": "The CVV provided was incorrect.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-009",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "incorrect_otp",
+      "error_description": "The OTP provided was incorrect.",
+      "error_source": "issuer",
+      "error_step": "payment_authentication",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-010",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "authentication_failed",
+      "error_description": "Card authentication failed.",
+      "error_source": "issuer",
+      "error_step": "payment_authentication",
+      "failure_category": "risk_or_compliance"
+    },
+    {
+      "id": "CARD-011",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "transaction_limit_exceeded",
+      "error_description": "The transaction limit was exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "CARD-012",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "transaction_daily_limit_exceeded",
+      "error_description": "The daily transaction limit was exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "CARD-013",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "international_transaction_not_allowed",
+      "error_description": "International transactions are not allowed for the card.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "CARD-014",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "incorrect_card_details",
+      "error_description": "The card details are incorrect.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-015",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "incorrect_card_expiry_date",
+      "error_description": "The card expiry date is incorrect.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-016",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "incorrect_cardholder_name",
+      "error_description": "The cardholder name is incorrect.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-017",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "card_number_invalid",
+      "error_description": "The card number is invalid.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-018",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "card_type_invalid",
+      "error_description": "The card type is invalid.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-019",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "otp_attempts_exceeded",
+      "error_description": "The allowed OTP attempts were exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authentication",
+      "failure_category": "risk_or_compliance"
+    },
+    {
+      "id": "CARD-020",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "otp_expired",
+      "error_description": "The OTP expired.",
+      "error_source": "issuer",
+      "error_step": "payment_authentication",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "CARD-021",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "bank_technical_error",
+      "error_description": "A technical error occurred at the bank.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "CARD-022",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "card",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "gateway_technical_error",
+      "error_description": "A technical error occurred at the gateway.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-001",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "insufficient_funds",
+      "error_description": "The linked bank account has insufficient funds.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "UPI-002",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "invalid_vpa",
+      "error_description": "The UPI VPA is invalid.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "UPI-003",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_cancelled",
+      "error_description": "The UPI payment was cancelled.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "UPI-004",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_collect_request_expired",
+      "error_description": "The UPI collect request expired.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-005",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_declined",
+      "error_description": "The UPI payment was declined.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-006",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_timed_out",
+      "error_description": "The UPI payment timed out.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-007",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "vpa_resolution_failed",
+      "error_description": "The UPI VPA could not be resolved.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-008",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "bank_technical_error",
+      "error_description": "A technical error occurred at the bank.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-009",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "gateway_technical_error",
+      "error_description": "A technical error occurred at the gateway.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-010",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "upi_app_technical_error",
+      "error_description": "A technical error occurred in the UPI app.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-011",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "transaction_on_vpa_restricted",
+      "error_description": "Transactions on the VPA are restricted.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "UPI-012",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "transaction_frequency_limit_exceeded",
+      "error_description": "The UPI transaction frequency limit was exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "UPI-013",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "transaction_daily_count_exceeded",
+      "error_description": "The daily UPI transaction count was exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "UPI-014",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "transaction_daily_limit_exceeded",
+      "error_description": "The daily UPI transaction limit was exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "UPI-015",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "psp_app_not_available",
+      "error_description": "The PSP app is unavailable.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-016",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "psp_app_not_supported",
+      "error_description": "The PSP app is not supported.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "UPI-017",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "psp_not_available",
+      "error_description": "The PSP is unavailable.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "UPI-018",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "psp_not_registered",
+      "error_description": "The PSP is not registered.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "UPI-019",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "collect_on_mcc_blocked",
+      "error_description": "UPI collect is blocked for the merchant category.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "UPI-020",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page",
+        "subscription"
+      ],
+      "method": "upi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "collect_request_pending",
+      "error_description": "A UPI collect request is still pending.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "NB-001",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "bank_account_invalid",
+      "error_description": "The bank account details are invalid.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "NB-002",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "bank_account_validation_failed",
+      "error_description": "Bank account validation failed.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "NB-003",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "bank_not_enabled",
+      "error_description": "The selected bank is not enabled.",
+      "error_source": "business",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "NB-004",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "bank_technical_error",
+      "error_description": "A technical error occurred at the bank.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "NB-005",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "user_not_registered_for_netbanking",
+      "error_description": "The customer is not registered for netbanking.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "NB-006",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_timed_out",
+      "error_description": "The netbanking payment timed out.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "NB-007",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_cancelled",
+      "error_description": "The netbanking payment was cancelled.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "NB-008",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "authentication_failed",
+      "error_description": "Netbanking authentication failed.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authentication",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "NB-009",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "insufficient_funds",
+      "error_description": "The bank account has insufficient funds.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "NB-010",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "netbanking",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "user_not_registered_for_netbanking",
+      "error_description": "The customer is not registered for netbanking.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "WAL-001",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_failed",
+      "error_description": "Wallet payment failed.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "WAL-002",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_declined",
+      "error_description": "Wallet payment was declined.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "WAL-003",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_cancelled",
+      "error_description": "Customer cancelled the wallet payment.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "WAL-004",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_timed_out",
+      "error_description": "Wallet payment timed out.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "WAL-005",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "insufficient_funds",
+      "error_description": "The wallet has insufficient funds.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "WAL-006",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "authentication_failed",
+      "error_description": "Wallet authentication failed.",
+      "error_source": "issuer",
+      "error_step": "payment_authentication",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "WAL-007",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "gateway_technical_error",
+      "error_description": "A technical error occurred at the gateway.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "WAL-008",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_risk_check_failed",
+      "error_description": "Wallet payment failed a risk check.",
+      "error_source": "internal",
+      "error_step": "payment_authorization",
+      "failure_category": "risk_or_compliance"
+    },
+    {
+      "id": "WAL-009",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "wallet",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "payment_method_not_enabled",
+      "error_description": "The wallet payment method is not enabled.",
+      "error_source": "business",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "EMI-001",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "user_not_eligible",
+      "error_description": "The customer is not eligible for Cardless EMI.",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "EMI-002",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "credit_limit_exceeded",
+      "error_description": "The available credit limit was exceeded.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "limit_or_balance"
+    },
+    {
+      "id": "EMI-003",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "credit_limit_expired",
+      "error_description": "The credit limit has expired.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "EMI-004",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "credit_limit_inactive",
+      "error_description": "The credit limit is inactive.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "EMI-005",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "credit_limit_not_approved",
+      "error_description": "The credit limit was not approved.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "EMI-006",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "credit_not_permitted",
+      "error_description": "Credit is not permitted for this transaction.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "EMI-007",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "credit_failed",
+      "error_description": "Credit processing failed.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "EMI-008",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "debit_declined",
+      "error_description": "The debit was declined.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "EMI-009",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "debit_instrument_blocked",
+      "error_description": "The debit instrument is blocked.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "EMI-010",
+      "product": [
+        "checkout",
+        "payment_link",
+        "payment_page"
+      ],
+      "method": "cardless_emi",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "debit_instrument_inactive",
+      "error_description": "The debit instrument is inactive.",
+      "error_source": "issuer",
+      "error_step": "payment_authorization",
+      "failure_category": "instrument_problem"
+    },
+    {
+      "id": "EM-001",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "mandate_creation_declined",
+      "error_description": "Mandate creation was declined.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "EM-002",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "mandate_creation_expired",
+      "error_description": "Mandate creation expired.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "EM-003",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "mandate_creation_failed",
+      "error_description": "Mandate creation failed.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "EM-004",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "mandate_creation_timeout",
+      "error_description": "Mandate creation timed out.",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "EM-005",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "reqauth_mandate_not_acknowledged",
+      "error_description": "The required mandate authorization was not acknowledged.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "customer_action_required"
+    },
+    {
+      "id": "EM-006",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "funds_blocked_by_mandate",
+      "error_description": "Funds were blocked by the mandate.",
+      "error_source": "issuer_bank",
+      "error_step": "payment_authorization",
+      "failure_category": "temporary"
+    },
+    {
+      "id": "EM-007",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_reason": "recurring_payment_not_enabled",
+      "error_description": "Recurring payment is not enabled.",
+      "error_source": "business",
+      "error_step": "payment_authorization",
+      "failure_category": "configuration"
+    },
+    {
+      "id": "SUB-001",
+      "product": [
+        "subscription"
+      ],
+      "method": "any",
+      "event": "subscription.pending",
+      "failure_category": "subscription_lifecycle",
+      "description": "Subscription is pending after a payment/charge issue and may be retried."
+    },
+    {
+      "id": "SUB-002",
+      "product": [
+        "subscription"
+      ],
+      "method": "any",
+      "event": "subscription.halted",
+      "failure_category": "subscription_lifecycle",
+      "description": "Subscription retries were exhausted and the subscription was halted."
+    },
+    {
+      "id": "SUB-003",
+      "product": [
+        "subscription"
+      ],
+      "method": "card",
+      "error_reason": "card_expired",
+      "failure_category": "instrument_problem",
+      "description": "Recurring charge failed because the card expired."
+    },
+    {
+      "id": "SUB-004",
+      "product": [
+        "subscription"
+      ],
+      "method": "card",
+      "error_reason": "debit_instrument_blocked",
+      "failure_category": "instrument_problem",
+      "description": "Recurring charge failed because the card/debit instrument was blocked."
+    },
+    {
+      "id": "SUB-005",
+      "product": [
+        "subscription"
+      ],
+      "method": "card",
+      "error_reason": "insufficient_funds",
+      "failure_category": "limit_or_balance",
+      "description": "Recurring charge failed because sufficient funds were not available."
+    },
+    {
+      "id": "SUB-006",
+      "product": [
+        "subscription"
+      ],
+      "method": "emandate",
+      "error_reason": "mandate_creation_declined",
+      "failure_category": "customer_action_required",
+      "description": "Recurring payment mandate was declined."
+    },
+    {
+      "id": "SUB-007",
+      "product": [
+        "subscription"
+      ],
+      "method": "upi",
+      "error_reason": "payment_failed",
+      "failure_category": "temporary",
+      "description": "Recurring UPI charge failed."
+    }
+  ],
+  "test_scenario_groups": [
+    {
+      "name": "card",
+      "scenarios": [
+        "declined",
+        "insufficient_funds",
+        "expired_card",
+        "online_payments_disabled",
+        "incorrect_cvv",
+        "incorrect_otp",
+        "authentication_failure",
+        "risk_failure",
+        "transaction_limit",
+        "timeout"
+      ]
+    },
+    {
+      "name": "upi",
+      "scenarios": [
+        "insufficient_funds",
+        "invalid_vpa",
+        "cancelled",
+        "collect_request_expired",
+        "declined",
+        "timeout",
+        "bank_technical_error",
+        "psp_unavailable"
+      ]
+    },
+    {
+      "name": "netbanking",
+      "scenarios": [
+        "authentication_failure",
+        "bank_technical_error",
+        "insufficient_funds",
+        "timeout",
+        "cancelled"
+      ]
+    },
+    {
+      "name": "wallet",
+      "scenarios": [
+        "insufficient_funds",
+        "declined",
+        "cancelled",
+        "timeout",
+        "technical_error"
+      ]
+    },
+    {
+      "name": "subscription",
+      "scenarios": [
+        "recurring_card_failure",
+        "recurring_upi_failure",
+        "emandate_failure",
+        "retry",
+        "halted"
+      ]
+    }
+  ]
+}
